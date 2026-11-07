@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>PUTRA PRO — Smali Studio</title>
+<style>
+:root{--bg:#080d18;--panel:#111c30;--panel2:#0b1425;--line:#263650;--blue:#1685ff;--cyan:#41c8ff;--txt:#edf4ff;--muted:#91a2bd}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#17345b 0,#080d18 42%);color:var(--txt);font:15px system-ui,Arial,sans-serif}
+header{padding:25px 18px 17px;text-align:center;border-bottom:1px solid #1d2b42;background:#0a1221cc;position:sticky;top:0;z-index:4;backdrop-filter:blur(14px)}
+.logo{font-weight:900;font-size:25px;letter-spacing:2px;color:#39aaff}.sub{font-size:12px;color:var(--muted);margin-top:4px}
+.wrap{max-width:780px;margin:18px auto;padding:0 13px 45px}.tabs{display:flex;gap:7px;overflow:auto;padding:5px 0 12px}.tabs button{white-space:nowrap;background:#111c30;border:1px solid var(--line);color:#b9c9df;padding:10px 13px;border-radius:12px;font-weight:700}.tabs button.active{background:#126fe0;color:white;border-color:#2992ff}
+.card{background:linear-gradient(145deg,#14223a,#0e192c);border:1px solid #2a3a55;border-radius:19px;padding:18px;margin:10px 0;box-shadow:0 12px 35px #0004}.card h2{font-size:17px;margin:0 0 15px}.card h3{font-size:14px;margin:18px 0 10px;color:#b9d5f8}
+label{display:block;color:#d8e5f6;margin:13px 0 7px}input,textarea,select{width:100%;padding:13px;border-radius:11px;border:1px solid #30415e;background:#091323;color:#f4f8ff;font:inherit;outline:none}input[type=color]{height:56px;padding:6px;cursor:pointer}input[type=file]{padding:9px}input:focus,textarea:focus,select:focus{border-color:#278cff}textarea{min-height:86px;resize:vertical}
+.preview{height:66px;border-radius:13px;border:1px solid #ffffff45;margin:12px 0;display:flex;align-items:center;justify-content:center;font-weight:800;overflow:hidden}
+.output{background:#050a13;border:1px solid #1b2a40;border-radius:12px;padding:14px;color:#8fc4ff;white-space:pre-wrap;overflow-wrap:anywhere;font:13px ui-monospace,monospace;min-height:52px}.animated-text{background-image:linear-gradient(90deg,var(--tx1,#1685ff),var(--tx2,#40d8ff),var(--tx1,#1685ff));background-size:250% auto;color:transparent!important;background-clip:text;-webkit-background-clip:text;animation:textFlow 3s linear infinite}.rainbow-text{background-image:linear-gradient(90deg,#ff3b30,#ff9500,#ffd60a,#34c759,#00c7be,#0a84ff,#bf5af2,#ff3b30);background-size:300% auto;color:transparent!important;background-clip:text;-webkit-background-clip:text;animation:textFlow 3.5s linear infinite}@keyframes textFlow{to{background-position:250% center}}
+.btn{border:0;border-radius:11px;background:linear-gradient(100deg,#0875ec,#159bff);color:white;font-weight:800;padding:13px 15px;width:100%;margin-top:10px;cursor:pointer}.btn.secondary{background:#1b2b43;border:1px solid #344a69}.btn:active{transform:scale(.99)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hint{font-size:12px;color:var(--muted);line-height:1.55;margin-top:9px}.hide{display:none!important}
+.toaststage{min-height:170px;background:#060b14;border:1px dashed #344967;border-radius:15px;display:flex;align-items:center;justify-content:center;padding:15px;position:relative;overflow:hidden}
+.toast{display:flex;align-items:center;gap:12px;width:min(100%,420px);padding:13px;border-radius:15px;background:#182943;color:white;box-shadow:0 10px 35px #0009;border:1px solid #ffffff22;animation:pop .35s ease}.toast img{width:42px;height:42px;object-fit:cover;border-radius:12px}.toast small{display:block;color:#b7c8df;font-size:11px;margin-top:3px;overflow-wrap:anywhere}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:none}}
+.dialog-overlay{position:fixed;inset:0;background:#020611c9;display:flex;align-items:center;justify-content:center;padding:20px;z-index:20;backdrop-filter:blur(5px)}
+.dialog-box{width:min(100%,390px);border:1px solid #ffffff2b;border-radius:22px;padding:20px;box-shadow:0 22px 70px #000b;animation:pop .25s ease}
+.dialog-icon{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;margin:0 auto 12px;background:#ffffff18;overflow:hidden}
+.dialog-icon img{width:100%;height:100%;object-fit:cover}.dialog-box h3{text-align:center;margin:5px 0 7px;font-size:19px}.dialog-box p{text-align:center;margin:0 0 16px;opacity:.8;font-size:13px}
+.social-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;padding:13px 14px;border-radius:12px;margin:8px 0;font-weight:750;border:1px solid #ffffff22}.social-link span:last-child{opacity:.7}
+.note{border-left:3px solid #ffb84d;padding:10px 12px;background:#2b2417;color:#f6dba8;border-radius:8px;font-size:12px;line-height:1.5;margin-top:12px}
+footer{text-align:center;color:#687b97;font-size:11px;padding:20px}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.card{padding:15px}.logo{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="logo">✦ PUTRA PRO</div><div class="sub">SMALI COLOR • GRADIENT • CUSTOM TOAST STUDIO</div></header>
+<main class="wrap">
+<div class="tabs">
+<button class="active" data-tab="color">Color</button><button data-tab="gradient">Gradient</button><button data-tab="reader">Baca APK/ZIP</button><button data-tab="toast">Custom Toast</button><button data-tab="social">Dialog Toast</button><button data-tab="export">Export ZIP</button>
+</div>
+
+
+<section id="reader" class="page hide">
+<div class="card">
+<h2>📂 APK / ZIP PACKAGE READER</h2>
+<p class="hint">Tempel/pilih file APK, APKS, atau ZIP project hasil decompile. PUTRA PRO akan mencoba membaca package name dan struktur file secara lokal di perangkat.</p>
+<label>Pilih APK / APKS / ZIP</label>
+<input type="file" id="apkZipFile" accept=".apk,.apks,.zip,application/zip,application/vnd.android.package-archive">
+<button class="btn" onclick="inspectApkZip()">🔎 BACA & DETEKSI PACKAGE</button>
+<div id="readerStatus" class="note" style="overflow-wrap:anywhere">Belum ada file dianalisis.</div>
+<label>Package name terdeteksi</label>
+<input id="detectedPkg" placeholder="Contoh: com.example.app" readonly>
+<div class="grid">
+<div><label>Nama file</label><input id="detectedFile" readonly placeholder="-"></div>
+<div><label>Jenis isi</label><input id="detectedType" readonly placeholder="-"></div>
+</div>
+<div class="output" id="readerDetails">Hasil analisis akan muncul di sini.</div>
+<button class="btn secondary" onclick="useDetectedPackage()">✓ GUNAKAN PACKAGE INI UNTUK GENERATOR</button>
+<div class="note"><b>Jadikan aplikasi tanpa watermark builder:</b> watermark “HTML to APK Builder” biasanya ditambahkan oleh aplikasi pembungkus yang dipakai, bukan oleh file HTML ini. Untuk APK tanpa watermark, buat project Android milik sendiri (misalnya Sketchware Pro), masukkan HTML ini ke folder assets, tampilkan dengan WebView, aktifkan JavaScript, lalu build dan sign APK sendiri. Jika memakai builder pihak ketiga, gunakan opsi resmi/no-watermark atau lisensi resminya; jangan mengubah watermark milik aplikasi lain secara paksa.</div><div class="note"><b>Batasan:</b> Pembacaan dilakukan di browser, tanpa upload ke server. APK/APKS dapat dibaca untuk mengambil manifest dan package name, tetapi APK terkompilasi berisi DEX, bukan file Smali. Untuk menyisipkan Smali, gunakan ZIP project yang sudah didecompile (berisi folder smali*/). PUTRA PRO tidak menjamin semua APK mendukung patch; jika manifest/arsip rusak, terenkripsi, atau formatnya tidak didukung, hasil akan ditandai gagal dan tidak memaksakan patch.</div>
+</div>
+</section>
+
+<section id="color" class="page">
+<div class="card">
+<h2>🎨 SMALI COLOR GENERATOR</h2>
+<label>Pilih warna</label><input type="color" id="colorPick" value="#ff0000">
+<label>Kode HEX</label><input id="hex" value="#ff0000" maxlength="7">
+<div class="preview" id="colorPreview" style="background:#ff0000"><span id="colorPreviewText">PUTRA PRO</span></div>
+<h3>Custom warna teks preview</h3><div class="grid"><div><label>Warna teks 1</label><input type="color" id="colorText1" value="#1685ff"></div><div><label>Warna teks 2</label><input type="color" id="colorText2" value="#40d8ff"></div></div>
+<label>Efek teks</label><select id="colorTextMode"><option value="solid">Warna solid</option><option value="flow">Gradient berjalan</option><option value="rainbow">Rainbow berjalan</option></select>
+<label>Hasil Smali (ARGB)</label><div class="output" id="smaliColor">0xffff0000</div>
+<button class="btn" onclick="copyText('smaliColor')">SALIN KODE SMALI</button>
+<p class="hint">Konversi HEX menjadi integer warna Android ARGB (alpha FF / 100% opaque). Pengaturan warna teks hanya mengubah preview generator, bukan nilai warna Smali.</p>
+</div></section>
+
+<section id="gradient" class="page hide">
+<div class="card"><h2>🌈 GRADIENT GENERATOR</h2>
+<div class="grid"><div><label>Warna awal</label><input type="color" id="g1" value="#0000ff"></div><div><label>Warna akhir</label><input type="color" id="g2" value="#000000"></div></div>
+<label>Jumlah warna (2–40)</label><input type="number" id="count" min="2" max="40" value="7">
+<div class="preview" id="gradientPreview"><span id="gradientPreviewText">PUTRA PRO</span></div>
+<h3>Custom warna teks preview</h3><div class="grid"><div><label>Warna teks 1</label><input type="color" id="gradientText1" value="#1685ff"></div><div><label>Warna teks 2</label><input type="color" id="gradientText2" value="#40d8ff"></div></div>
+<label>Efek teks</label><select id="gradientTextMode"><option value="solid">Warna solid</option><option value="flow">Gradient berjalan</option><option value="rainbow">Rainbow berjalan</option></select>
+<label>Hasil Array Smali</label><div class="output" id="gradientOut"></div>
+<button class="btn" onclick="copyText('gradientOut')">SALIN GRADIENT</button>
+</div></section>
+
+<section id="toast" class="page hide">
+<div class="card"><h2>🔔 CUSTOM TOAST GENERATOR</h2>
+<label>Judul toast</label><input id="toastTitle" value="PUTRA PRO">
+<label>Pesan toast</label><input id="toastMsg" value="Welcome to Putra Pro!">
+<div class="grid"><div><label>Warna background</label><input type="color" id="toastBg" value="#142944"></div><div><label>Warna teks</label><input type="color" id="toastFg" value="#ffffff"></div></div>
+<label>Durasi preview (detik)</label><input type="number" id="duration" min="1" max="30" value="5">
+<label>Avatar / ikon (opsional)</label><input type="file" id="avatar" accept="image/png,image/jpeg,image/webp">
+<label>Preview toast</label><div class="toaststage" id="toastStage"><div class="toast" id="toastPreview"><div id="avatarSlot" style="font-size:28px">✦</div><div><b id="pvTitle">PUTRA PRO</b><small id="pvMsg">Welcome to Putra Pro!</small></div></div></div>
+<button class="btn" onclick="testToast()">▶ TES TOAST SEKARANG</button>
+<button class="btn secondary" onclick="downloadPart('toast')">💾 SIMPAN CUSTOM TOAST ZIP</button>
+<p class="hint">Preview tampil di halaman ini selama durasi yang dipilih. Avatar yang diunggah akan ikut dimasukkan ke ZIP.</p>
+</div></section>
+
+<section id="social" class="page hide">
+<div class="card"><h2>💬 DIALOG TOAST MEDIA SOSIAL</h2>
+<label>Judul dialog</label><input id="dialogTitle" value="Connect With Putra Pro">
+<label>Pesan dialog</label><input id="socialMsg" value="Pilih media sosial untuk terhubung:">
+<label>Ikon dialog (emoji / teks)</label><input id="dialogIcon" value="🌐" maxlength="8">
+<label>Upload ikon gambar (opsional)</label><input type="file" id="dialogIconFile" accept="image/png,image/jpeg,image/webp,image/gif">
+<div class="grid"><div><label>Warna background</label><input type="color" id="dialogBg" value="#14223a"></div><div><label>Warna teks</label><input type="color" id="dialogFg" value="#f2f7ff"></div></div>
+<label>Warna tombol media sosial</label><input type="color" id="dialogButton" value="#087df0">
+<h3>LINK MEDIA SOSIAL</h3>
+<label>WhatsApp pribadi URL</label><input id="wa" value="https://wa.me/08139535378">
+<label>WhatsApp Channel URL</label><input id="channel" value="https://whatsapp.com/channel/0029VbDhKr77z4kizybi6n2M">
+<label>TikTok URL</label><input id="tiktok" value="https://www.tiktok.com/@lowwwv2?_r=1&_t=ZS-99LJmLjJfgg">
+<label>Preview dialog</label><div class="toaststage"><div class="dialog-box" id="dialogPreview" style="background:#14223a;color:#f2f7ff"><div class="dialog-icon" id="dialogPreviewIcon">🌐</div><h3 id="dialogPreviewTitle">Connect With Putra Pro</h3><p id="dialogPreviewMsg">Pilih media sosial untuk terhubung:</p><div id="dialogPreviewLinks"></div><button class="btn secondary" style="margin-top:12px" onclick="hideDialogPreview()">TUTUP PREVIEW</button></div></div>
+<button class="btn" onclick="testDialog()">▶ TES DIALOG TOAST</button>
+<button class="btn secondary" onclick="downloadPart('dialog')">💾 SIMPAN DIALOG TOAST ZIP</button>
+<p class="hint">Dialog preview interaktif. Tekan salah satu tombol untuk membuka URL media sosial. Ikon, warna, judul, pesan, dan URL ikut dimasukkan ke ZIP.</p>
+</div></section>
+
+<section id="export" class="page hide">
+<div class="card"><h2>📦 GENERATE SMALI ZIP</h2>
+<label>Nama package aplikasi (contoh: com.putra.pro)</label><input id="pkg" value="com.putra.pro">
+<label>Nama class Smali</label><input id="className" value="mToast">
+<label>Nama toast saat aplikasi dibuka</label><input id="welcome" value="Welcome to PUTRA PRO">
+<div class="output" id="exportSummary">Export All ZIP berisi komponen generator. Simpan Custom Toast dan Dialog Toast secara terpisah dari tab masing-masing.</div>
+<button class="btn" onclick="downloadZip()">⬇ EXPORT ALL ZIP</button>
+<div id="downloadResult" class="note hide" style="overflow-wrap:anywhere"></div>
+<div class="note"><b>Catatan penting Android:</b> HTML ini dapat membuat paket sumber Smali dan petunjuk patch, bukan mengedit APK secara langsung. Untuk memasang, APK perlu didecompile dengan Apktool, file Smali disesuaikan dengan package dan titik pemanggilan aplikasi, lalu build dan sign ulang. Android membatasi custom toast; API Toast standar hanya menyediakan SHORT/LONG, bukan durasi tepat 5 detik. Durasi 5 detik di sini berlaku untuk preview HTML. File Smali memakai Toast.LENGTH_LONG sebagai fallback.</div>
+</div></section>
+<div id="dialogModal" class="dialog-overlay hide" onclick="if(event.target===this)hideDialogPreview()"><div id="dialogModalContent"></div></div>
+<footer>PUTRA PRO • Made for Android • Offline-ready generator</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function normHex(v){let x=v.trim();if(!/^#?[0-9a-fA-F]{6}$/.test(x))return null;return '#'+x.replace('#','').toLowerCase()}
+function argb(hex){return '0xff'+hex.slice(1)}
+function applyPreviewText(el,mode,c1,c2){
+  if(!el)return;
+  el.classList.remove('animated-text','rainbow-text');
+  el.style.removeProperty('--tx1');el.style.removeProperty('--tx2');el.style.color='';
+  if(mode==='rainbow')el.classList.add('rainbow-text');
+  else if(mode==='flow'){el.classList.add('animated-text');el.style.setProperty('--tx1',c1);el.style.setProperty('--tx2',c2)}
+  else el.style.color=c1;
+}
+function updateColor(){
+  let h=normHex($('hex').value);
+  if(h){$('hex').value=h;$('colorPick').value=h;$('colorPreview').style.background=h;$('smaliColor').textContent=argb(h)}
+  applyPreviewText($('colorPreviewText'),$('colorTextMode').value,$('colorText1').value,$('colorText2').value);
+}
+
+$('colorPick').addEventListener('input',()=>{$('hex').value=$('colorPick').value;updateColor()});
+$('hex').addEventListener('input',()=>{let h=normHex($('hex').value);if(h){$('colorPick').value=h;$('colorPreview').style.background=h;$('smaliColor').textContent=argb(h)}});
+function hexRgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16))}
+function gradient(){
+  let a=hexRgb($('g1').value),b=hexRgb($('g2').value),n=Math.max(2,Math.min(40,parseInt($('count').value)||7)),arr=[];
+  for(let i=0;i<n;i++){let t=i/(n-1),c=a.map((v,j)=>Math.round(v+(b[j]-v)*t));arr.push('0xff'+c.map(x=>x.toString(16).padStart(2,'0')).join(''))}
+  $('gradientPreview').style.background=`linear-gradient(90deg,${$('g1').value},${$('g2').value})`;
+  $('gradientOut').textContent='.array-data 4\n'+arr.map(x=>'    '+x).join('\n')+'\n.end array-data';
+  applyPreviewText($('gradientPreviewText'),$('gradientTextMode').value,$('gradientText1').value,$('gradientText2').value);
+}
+['g1','g2','count'].forEach(id=>$(id).addEventListener('input',gradient));
+
+['colorText1','colorText2','colorTextMode'].forEach(id=>$(id).addEventListener('input',updateColor));
+['gradientText1','gradientText2','gradientTextMode'].forEach(id=>$(id).addEventListener('input',gradient));
+function copyText(id){let t=$(id).textContent;navigator.clipboard?.writeText(t).then(()=>alert('Kode berhasil disalin')).catch(()=>alert('Salin manual: tekan lama pada hasil kode'))}
+let avatarData=null,avatarName='';
+$('avatar').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;avatarName=f.name.replace(/[^a-zA-Z0-9._-]/g,'_');let r=new FileReader();r.onload=()=>{avatarData=r.result;$('avatarSlot').innerHTML='<img alt="avatar" style="width:42px;height:42px;border-radius:12px;object-fit:cover" src="'+avatarData+'">'};r.readAsDataURL(f)});
+function syncToast(){$('pvTitle').textContent=$('toastTitle').value||'PUTRA PRO';$('pvMsg').textContent=$('toastMsg').value||'';$('toastPreview').style.background=$('toastBg').value;$('toastPreview').style.color=$('toastFg').value}
+['toastTitle','toastMsg','toastBg','toastFg'].forEach(id=>$(id).addEventListener('input',syncToast));
+function testToast(){syncToast();$('toastPreview').classList.remove('hide');let d=Math.max(1,Math.min(30,Number($('duration').value)||5));setTimeout(()=>$('toastPreview').classList.add('hide'),d*1000)}
+let dialogIconData=null,dialogIconName='';
+$('dialogIconFile').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;dialogIconName=f.name.replace(/[^a-zA-Z0-9._-]/g,'_');let r=new FileReader();r.onload=()=>{dialogIconData=r.result;syncDialog()};r.readAsDataURL(f)});
+function safeUrl(v){try{let u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch(e){return '#'}}
+function syncDialog(){let bg=$('dialogBg').value,fg=$('dialogFg').value,btn=$('dialogButton').value;$('dialogPreview').style.background=bg;$('dialogPreview').style.color=fg;$('dialogPreviewTitle').textContent=$('dialogTitle').value||'Connect With Putra Pro';$('dialogPreviewMsg').textContent=$('socialMsg').value||'';if(dialogIconData){$('dialogPreviewIcon').innerHTML='<img alt="custom icon" src="'+dialogIconData+'">'}else{$('dialogPreviewIcon').textContent=$('dialogIcon').value||'🌐'};let items=[['WhatsApp Pribadi',$('wa').value],['WhatsApp Channel',$('channel').value],['TikTok',$('tiktok').value]];$('dialogPreviewLinks').innerHTML=items.map(([n,u])=>'<a class="social-link" style="background:'+btn+';color:white" href="'+safeUrl(u)+'" target="_blank" rel="noopener"><span>'+n+'</span><span>↗</span></a>').join('')}
+function testDialog(){syncDialog();let box=$('dialogPreview').cloneNode(true);box.removeAttribute('id');box.querySelector('button').textContent='TUTUP DIALOG';box.querySelector('button').onclick=hideDialogPreview;$('dialogModalContent').replaceChildren(box);$('dialogModal').classList.remove('hide')}
+function hideDialogPreview(){$('dialogModal').classList.add('hide')}
+function socialConfig(){return 'DialogTitle: '+$('dialogTitle').value+'\nDialogMessage: '+$('socialMsg').value+'\nDialogIcon: '+$('dialogIcon').value+'\nDialogBackground: '+$('dialogBg').value+'\nDialogText: '+$('dialogFg').value+'\nDialogButton: '+$('dialogButton').value+'\nWhatsApp: '+$('wa').value+'\nWhatsApp Channel: '+$('channel').value+'\nTikTok: '+$('tiktok').value}
+['dialogTitle','dialogIcon','socialMsg','dialogBg','dialogFg','dialogButton','wa','channel','tiktok'].forEach(id=>$(id).addEventListener('input',syncDialog));
+function esc(s){return s.replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n')}
+function smaliFiles(){
+let pkg=$('pkg').value.trim()||'com.putra.pro',cls=$('className').value.trim().replace(/[^A-Za-z0-9_$]/g,'')||'mToast',path='L'+pkg.replace(/\./g,'/')+'/'+cls+';';
+let msg=esc($('toastMsg').value||'Welcome to Putra Pro'),title=esc($('toastTitle').value||'PUTRA PRO');
+let toast=`.class public ${path}
+.super Ljava/lang/Object;
+
+.method public static show(Landroid/content/Context;Ljava/lang/String;)V
+    .locals 2
+    const/4 v0, 0x1
+    invoke-static {p0, p1, v0}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
+    move-result-object v1
+    invoke-virtual {v1}, Landroid/widget/Toast;->show()V
+    return-void
+.end method
+
+.method public static showWelcome(Landroid/content/Context;)V
+    .locals 1
+    const-string v0, "${title}: ${msg}"
+    invoke-static {p0, v0}, ${path}->show(Landroid/content/Context;Ljava/lang/String;)V
+    return-void
+.end method
+`;
+let colors='.class public L'+pkg.replace(/\./g,'/')+'/mColor;\n.super Ljava/lang/Object;\n\n# ARGB color: '+argb(normHex($('hex').value)||'#ff0000')+'\n';
+let patch=`PUTRA PRO — SMALI PATCH GUIDE
+Package: ${pkg}
+Toast class: ${cls}.smali
+Welcome message: ${$('welcome').value}
+
+FILES
+- ${cls}.smali : helper Toast (Toast.LENGTH_LONG fallback)
+- mColor.smali : color reference
+- config.txt : customization and social URLs
+${avatarData?' - '+avatarName+' : selected toast avatar asset':''}
+${dialogIconData?' - '+dialogIconName+' : dialog icon asset':''}
+
+INSTALLATION
+1. Backup APK and project before editing.
+2. Decode APK with Apktool.
+3. Place ${cls}.smali under smali/${pkg.replace(/\\./g,'/')}/ (create folders as needed).
+4. Add a call to ${path}->showWelcome(Landroid/content/Context;)V at a valid Activity/entry point after Context is available.
+5. Rebuild APK, sign it, then test on a spare copy.
+6. Verify class path, method signature and register count against your target APK.
+
+IMPORTANT
+- This is a helper template; it does not automatically patch every APK.
+- Replace package/class path and insertion point to match the target app.
+- Standard Android Toast duration is SHORT or LONG. Exact 5-second custom duration needs a custom in-app overlay implementation, not Toast.LENGTH_LONG.
+- Avatar is included as an asset only; add an ImageView/custom layout and wire it in code if you need it displayed in the APK toast.
+- Dialog colors, icon choice and social URLs are stored in config.txt.\n- Dialog preview works in this HTML; APK dialog needs a custom Dialog/AlertDialog layout and click listeners for ACTION_VIEW URLs.\n- Uploaded dialog icon is included as an asset; wire it into the target APK layout.
+`;
+let config=`PUTRA PRO CONFIG
+Package=${pkg}
+ToastTitle=${$('toastTitle').value}
+ToastMessage=${$('toastMsg').value}
+ToastBackground=${$('toastBg').value}
+ToastText=${$('toastFg').value}
+PreviewDurationSeconds=${$('duration').value}
+ColorARGB=${argb(normHex($('hex').value)||'#ff0000')}
+GradientStart=${$('g1').value}
+GradientEnd=${$('g2').value}
+GradientCount=${$('count').value}
+
+${socialConfig()}
+`;
+return {[cls+'.smali']:toast,'mColor.smali':colors,'patch.txt':patch,'config.txt':config,...(avatarData?{[avatarName]:avatarData.split(',')[1]}:{}),...(dialogIconData?{[dialogIconName]:dialogIconData.split(',')[1]}:{})};
+}
+// ZIP writer (STORE/no compression). Uses typed arrays to avoid argument-limit failures on Android.
+const crcTable=(()=>{let c,t=[];for(let n=0;n<256;n++){c=n;for(let k=0;k<8;k++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);t[n]=c>>>0}return t})();
+function crc32(buf){let c=0xffffffff;for(let i=0;i<buf.length;i++)c=crcTable[(c^buf[i])&255]^(c>>>8);return (c^0xffffffff)>>>0}
+function zipHeader(size,fields){let b=new Uint8Array(size),v=new DataView(b.buffer);v.setUint32(0,fields.sig,true);if(fields.local){v.setUint16(4,20,true);v.setUint16(6,0,true);v.setUint16(8,0,true);v.setUint16(10,0,true);v.setUint16(12,0,true);v.setUint32(14,fields.crc,true);v.setUint32(18,fields.len,true);v.setUint32(22,fields.len,true);v.setUint16(26,fields.nameLen,true);v.setUint16(28,0,true)}else{v.setUint16(4,20,true);v.setUint16(6,20,true);v.setUint16(8,0,true);v.setUint16(10,0,true);v.setUint16(12,0,true);v.setUint16(14,0,true);v.setUint32(16,fields.crc,true);v.setUint32(20,fields.len,true);v.setUint32(24,fields.len,true);v.setUint16(28,fields.nameLen,true);v.setUint16(30,0,true);v.setUint16(32,0,true);v.setUint16(34,0,true);v.setUint16(36,0,true);v.setUint32(38,0,true);v.setUint32(42,fields.offset,true)}return b}
+function joinBytes(parts){let total=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(total),at=0;for(const part of parts){out.set(part,at);at+=part.length}return out}
+function makeZip(files){let enc=new TextEncoder(),local=[],central=[],offset=0,count=0;for(let [name,data] of Object.entries(files)){let nb=enc.encode(name),db=typeof data==='string'?enc.encode(data):data,crc=crc32(db),lh=zipHeader(30,{sig:0x04034b50,local:true,crc,len:db.length,nameLen:nb.length});local.push(lh,nb,db);let ch=zipHeader(46,{sig:0x02014b50,local:false,crc,len:db.length,nameLen:nb.length,offset});central.push(ch,nb);offset+=lh.length+nb.length+db.length;count++}let localBytes=joinBytes(local),centralBytes=joinBytes(central),end=new Uint8Array(22),v=new DataView(end.buffer);v.setUint32(0,0x06054b50,true);v.setUint16(4,0,true);v.setUint16(6,0,true);v.setUint16(8,count,true);v.setUint16(10,count,true);v.setUint32(12,centralBytes.length,true);v.setUint32(16,localBytes.length,true);v.setUint16(20,0,true);return new Blob([localBytes,centralBytes,end],{type:'application/zip'})}
+function bytesFromDataUrl(dataUrl){let raw=atob(dataUrl.split(',')[1]),out=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)out[i]=raw.charCodeAt(i);return out}
+function downloadBlob(blob,filename){let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;a.textContent='⬇ TAP DI SINI JIKA DOWNLOAD TIDAK OTOMATIS — '+filename;a.style.cssText='display:block;margin-top:10px;padding:12px;border-radius:10px;background:#087df0;color:white;text-align:center;font-weight:800;text-decoration:none;overflow-wrap:anywhere';a.setAttribute('rel','noopener');let box=$('downloadResult');box.classList.remove('hide');box.replaceChildren(document.createTextNode('ZIP berhasil dibuat. Jika unduhan tidak langsung dimulai, tekan tautan berikut: '),a);a.click();setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},120000)}
+function toastSmaliFiles(){let pkg=$('pkg').value.trim()||'com.putra.pro',cls=$('className').value.trim().replace(/[^A-Za-z0-9_$]/g,'')||'mToast',path='L'+pkg.replace(/\./g,'/')+'/'+cls+';',msg=esc($('toastMsg').value||'Welcome to Putra Pro'),title=esc($('toastTitle').value||'PUTRA PRO');let code=`.class public ${path}
+.super Ljava/lang/Object;
+
+.method public static show(Landroid/content/Context;Ljava/lang/String;)V
+    .locals 2
+    const/4 v0, 0x1
+    invoke-static {p0, p1, v0}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
+    move-result-object v1
+    invoke-virtual {v1}, Landroid/widget/Toast;->show()V
+    return-void
+.end method
+
+.method public static showWelcome(Landroid/content/Context;)V
+    .locals 1
+    const-string v0, "${title}: ${msg}"
+    invoke-static {p0, v0}, ${path}->show(Landroid/content/Context;Ljava/lang/String;)V
+    return-void
+.end method
+`;return {[cls+'.smali']:code}}
+function dialogSmaliFiles(){let pkg=$('pkg').value.trim()||'com.putra.pro',path='L'+pkg.replace(/\./g,'/')+'/mDialogToast;',title=esc($('dialogTitle').value||'Connect With Putra Pro'),message=esc($('socialMsg').value||'Pilih media sosial untuk terhubung:');let code=`.class public ${path}
+.super Ljava/lang/Object;
+
+# Displays a native Android AlertDialog. Social URLs are provided in dialog-config.txt;
+# add click listeners in the target app to open them with ACTION_VIEW.
+.method public static show(Landroid/content/Context;)V
+    .locals 3
+    new-instance v0, Landroid/app/AlertDialog$Builder;
+    invoke-direct {v0, p0}, Landroid/app/AlertDialog$Builder;-><init>(Landroid/content/Context;)V
+    const-string v1, "${title}"
+    invoke-virtual {v0, v1}, Landroid/app/AlertDialog$Builder;->setTitle(Ljava/lang/CharSequence;)Landroid/app/AlertDialog$Builder;
+    move-result-object v0
+    const-string v1, "${message}"
+    invoke-virtual {v0, v1}, Landroid/app/AlertDialog$Builder;->setMessage(Ljava/lang/CharSequence;)Landroid/app/AlertDialog$Builder;
+    move-result-object v0
+    const-string v1, "TUTUP"
+    const/4 v2, 0x0
+    invoke-virtual {v0, v1, v2}, Landroid/app/AlertDialog$Builder;->setPositiveButton(Ljava/lang/CharSequence;Landroid/content/DialogInterface$OnClickListener;)Landroid/app/AlertDialog$Builder;
+    move-result-object v0
+    invoke-virtual {v0}, Landroid/app/AlertDialog$Builder;->show()Landroid/app/AlertDialog;
+    move-result-object v0
+    return-void
+.end method
+`;return {'mDialogToast.smali':code}}
+function downloadPart(kind){try{let files={},pkg=$('pkg').value.trim()||'com.putra.pro',folder='smali/'+pkg.replace(/\./g,'/')+'/';if(kind==='toast'){Object.assign(files,toastSmaliFiles());files['mColor.smali']='.class public L'+pkg.replace(/\./g,'/')+'/mColor;\n.super Ljava/lang/Object;\n\n# Toast background '+$('toastBg').value+'\n# Toast text '+$('toastFg').value+'\n';files['toast-config.txt']=`Title=${$('toastTitle').value}\nMessage=${$('toastMsg').value}\nBackground=${$('toastBg').value}\nText=${$('toastFg').value}\nPreviewDurationSeconds=${$('duration').value}\n`;files['patch-toast.txt']=`Copy ${Object.keys(files).filter(x=>x.endsWith('.smali')).join(', ')} into ${folder}\nCall ${'L'+pkg.replace(/\./g,'/')+'/'+($('className').value.trim()||'mToast')}->show(Landroid/content/Context;Ljava/lang/String;)V from a valid Activity context.\nAndroid Toast duration is system-controlled SHORT/LONG; exact 5 seconds is HTML preview only.\n`;if(avatarData)files['assets/'+(avatarName||'toast-avatar.png')]=bytesFromDataUrl(avatarData);downloadBlob(makeZip(files),'PUTRA_PRO_CUSTOM_TOAST.zip')}else if(kind==='dialog'){Object.assign(files,dialogSmaliFiles());files['dialog-config.txt']=`Title=${$('dialogTitle').value}\nMessage=${$('socialMsg').value}\nIcon=${$('dialogIcon').value}\nBackground=${$('dialogBg').value}\nText=${$('dialogFg').value}\nButton=${$('dialogButton').value}\nWhatsApp=${$('wa').value}\nWhatsAppChannel=${$('channel').value}\nTikTok=${$('tiktok').value}\n`;files['patch-dialog.txt']=`Copy mDialogToast.smali into ${folder}\nCall L${pkg.replace(/\./g,'/')}/mDialogToast;->show(Landroid/content/Context;)V from an Activity.\nThis Smali currently displays a native title/message/close AlertDialog. Configured social URLs and icon are included as resources/config; social click listeners and custom icon layout must be wired into the target APK.\n`;if(dialogIconData)files['assets/'+(dialogIconName||'dialog-icon.png')]=bytesFromDataUrl(dialogIconData);downloadBlob(makeZip(files),'PUTRA_PRO_DIALOG_TOAST.zip')}}catch(err){let box=$('downloadResult');box.classList.remove('hide');box.textContent='Gagal membuat ZIP: '+(err&&err.message?err.message:String(err))+'. Coba gunakan Chrome terbaru dan tekan tombol simpan sekali lagi.'}}
+function downloadZip(){try{let files=smaliFiles();Object.assign(files,dialogSmaliFiles());files['dialog-config.txt']=`Title=${$('dialogTitle').value}\nMessage=${$('socialMsg').value}\nIcon=${$('dialogIcon').value}\nBackground=${$('dialogBg').value}\nText=${$('dialogFg').value}\nButton=${$('dialogButton').value}\nWhatsApp=${$('wa').value}\nWhatsAppChannel=${$('channel').value}\nTikTok=${$('tiktok').value}\n`;if(dialogIconData)files['dialog-icon-'+(dialogIconName||'custom.png')]=bytesFromDataUrl(dialogIconData);downloadBlob(makeZip(files),'PUTRA_PRO_EXPORT_ALL.zip')}catch(err){let box=$('downloadResult');box.classList.remove('hide');box.textContent='Gagal membuat ZIP: '+(err&&err.message?err.message:String(err))}}
+
+// APK / ZIP reader: local-only inspection of ZIP central directory and AndroidManifest.xml.
+function readU16(v,o){return v.getUint16(o,true)}
+function readU32(v,o){return v.getUint32(o,true)}
+async function inflateRaw(bytes){
+  if(typeof DecompressionStream==='undefined') throw new Error('Browser ini belum mendukung pembacaan ZIP terkompresi. Coba Chrome versi terbaru.');
+  const ds=new DecompressionStream('deflate-raw');
+  const stream=new Blob([bytes]).stream().pipeThrough(ds);
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+async function zipEntries(buf){
+  const u=new Uint8Array(buf),v=new DataView(buf);
+  let eocd=-1;
+  for(let i=Math.max(0,u.length-65557);i<=u.length-22;i++){
+    if(readU32(v,i)===0x06054b50)eocd=i;
+  }
+  if(eocd<0) throw new Error('Struktur ZIP tidak ditemukan atau file bukan APK/ZIP yang valid.');
+  const count=readU16(v,eocd+10),cdOffset=readU32(v,eocd+16),entries=[];
+  let p=cdOffset;
+  for(let i=0;i<count;i++){
+    if(readU32(v,p)!==0x02014b50) throw new Error('Daftar file ZIP rusak.');
+    const method=readU16(v,p+10),compSize=readU32(v,p+20),nameLen=readU16(v,p+28),extraLen=readU16(v,p+30),commentLen=readU16(v,p+32),localOff=readU32(v,p+42);
+    const name=new TextDecoder().decode(u.slice(p+46,p+46+nameLen));
+    entries.push({name,method,compSize,localOff});
+    p+=46+nameLen+extraLen+commentLen;
+  }
+  return {u,v,entries};
+}
+async function extractZipEntry(z,e){
+  const v=z.v,u=z.u,p=e.localOff;
+  if(readU32(v,p)!==0x04034b50) throw new Error('Header file ZIP tidak valid: '+e.name);
+  const nameLen=readU16(v,p+26),extraLen=readU16(v,p+28),start=p+30+nameLen+extraLen;
+  const packed=u.slice(start,start+e.compSize);
+  if(e.method===0)return packed;
+  if(e.method===8)return await inflateRaw(packed);
+  throw new Error('Metode kompresi tidak didukung untuk '+e.name+' (method '+e.method+').');
+}
+function decodeAxmlStrings(bytes){
+  const v=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength),strings=[];
+  let p=8;
+  while(p+8<=bytes.length){
+    const type=readU16(v,p),size=readU32(v,p+4);
+    if(size<8||p+size>bytes.length)break;
+    if(type===1){
+      const count=readU32(v,p+8),flags=readU32(v,p+16),stringsStart=readU32(v,p+20),utf8=(flags&0x100)!==0;
+      for(let i=0;i<count;i++){
+        const off=readU32(v,p+28+i*4),q=p+stringsStart+off;
+        if(q>=bytes.length){strings.push('');continue}
+        if(utf8){
+          let a=q,first=bytes[a++],n;
+          if(first&0x80)n=((first&0x7f)<<8)|bytes[a++];else n=first;
+          let second=bytes[a++];if(second&0x80)second=((second&0x7f)<<8)|bytes[a++];
+          n=second;
+          let end=a;while(end<bytes.length&&bytes[end]!==0)end++;
+          strings.push(new TextDecoder('utf-8').decode(bytes.slice(a,end)));
+        }else{
+          let a=q,units=readU16(v,a);a+=2;if(units&0x8000){units=((units&0x7fff)<<16)|readU16(v,a);a+=2}
+          strings.push(new TextDecoder('utf-16le').decode(bytes.slice(a,a+units*2)));
+        }
+      }
+    }
+    p+=size;
+  }
+  return strings;
+}
+function packageFromBinaryManifest(bytes){
+  const v=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+  if(bytes.length<8||readU16(v,0)!==3)return null;
+  const strings=decodeAxmlStrings(bytes);let p=8;
+  while(p+16<=bytes.length){
+    const type=readU16(v,p),size=readU32(v,p+4);
+    if(size<8||p+size>bytes.length)break;
+    if(type===0x0102&&size>=36){
+      const nameIdx=readU32(v,p+20),tag=strings[nameIdx]||'';
+      const attrStart=readU16(v,p+24),attrSize=readU16(v,p+26),attrCount=readU16(v,p+28);
+      if(tag==='manifest'){
+        const base=p+16+attrStart;
+        for(let i=0;i<attrCount;i++){
+          const a=base+i*attrSize;if(a+20>p+size)break;
+          const attrName=strings[readU32(v,a+4)]||'';
+          const raw=readU32(v,a+8),valueType=bytes[a+15],data=readU32(v,a+16);
+          if(attrName==='package')return raw!==0xffffffff?(strings[raw]||null):(valueType===3?(strings[data]||null):null);
+        }
+      }
+    }
+    p+=size;
+  }
+  return null;
+}
+function packageFromTextManifest(text){
+  const m=text.match(/<manifest\b[^>]*\bpackage\s*=\s*["']([^"']+)["']/i);
+  return m?m[1]:null;
+}
+async function inspectManifestFromZipBuffer(buf){
+  const z=await zipEntries(buf);
+  const manifest=z.entries.find(e=>e.name==='AndroidManifest.xml'||e.name.endsWith('/AndroidManifest.xml'));
+  if(manifest){
+    const b=await extractZipEntry(z,manifest);
+    const text=new TextDecoder().decode(b);
+    let pkg=packageFromTextManifest(text);
+    if(!pkg)pkg=packageFromBinaryManifest(b);
+    return {pkg,entries:z.entries,manifestFound:true};
+  }
+  return {pkg:null,entries:z.entries,manifestFound:false};
+}
+async function inspectApkZip(){
+  const f=$('apkZipFile').files[0],status=$('readerStatus');
+  if(!f){status.textContent='TEXTDRAW: GAGAL — pilih file APK, APKS, atau ZIP terlebih dahulu.';return}
+  status.textContent='Sedang membaca arsip secara lokal…';
+  $('detectedPkg').value='';$('detectedFile').value=f.name;$('detectedType').value='Menganalisis…';$('readerDetails').textContent='Mohon tunggu.';
+  try{
+    const buf=await f.arrayBuffer();
+    let result=await inspectManifestFromZipBuffer(buf),kind='APK/ZIP';
+    if(!result.manifestFound){
+      const nested=result.entries.filter(e=>/\.apk$/i.test(e.name));
+      for(const ne of nested){
+        try{const inner=await extractZipEntry(await zipEntries(buf),ne);const r=await inspectManifestFromZipBuffer(inner);if(r.pkg){result=r;kind='APKS / split APK';break}}
+        catch(_){}
+      }
+    }
+    const names=result.entries.map(e=>e.name);
+    const smali=names.filter(n=>/^smali[^/]*\/.+\.smali$/i.test(n));
+    const dex=names.filter(n=>/^classes\d*\.dex$/i.test(n));
+    const hasManifest=result.manifestFound;
+    if(result.pkg){
+      $('detectedPkg').value=result.pkg;
+      $('detectedType').value=smali.length?'ZIP project decompile':(dex.length?'APK dengan DEX':'Arsip Android');
+      let msg='BERHASIL — package name ditemukan: '+result.pkg+'.';
+      if(smali.length)msg+=' File Smali ditemukan ('+smali.length+'); ZIP kemungkinan project decompile.';
+      else if(dex.length)msg+=' DEX ditemukan ('+dex.join(', ')+'), tetapi APK terkompilasi tidak berisi sumber Smali. Decode dengan Apktool sebelum menyisipkan Smali.';
+      status.textContent=msg;
+      $('readerDetails').textContent='Jenis pembacaan: '+kind+'\nPackage: '+result.pkg+'\nAndroidManifest.xml: ditemukan\nFile Smali pada arsip utama: '+smali.length+'\nFile DEX pada arsip utama: '+dex.length+'\n\n'+(smali.length?'Project Smali terdeteksi. Periksa folder smali*/ dan titik pemanggilan sebelum rebuild.':'Package berhasil dibaca. Untuk memasang Smali, decompile APK terlebih dahulu atau unggah ZIP hasil decompile.');
+    }else{
+      $('detectedType').value=hasManifest?'Manifest tidak terbaca':'ZIP/project';
+      status.textContent='TEXTDRAW: GAGAL — package name tidak dapat dideteksi. Aplikasi/arsip mungkin tidak didukung, rusak, terenkripsi, atau manifest memakai format yang tidak dikenali.';
+      $('readerDetails').textContent='File: '+f.name+'\nEntri arsip: '+names.length+'\nAndroidManifest.xml: '+(hasManifest?'ada, tetapi gagal diparse':'tidak ditemukan')+'\nSmali: '+smali.length+'\nDEX: '+dex.length+'\n\nCoba APK asli atau ZIP hasil decompile Apktool.';
+    }
+  }catch(err){
+    $('detectedType').value='Gagal dibaca';
+    status.textContent='TEXTDRAW: GAGAL — '+(err&&err.message?err.message:String(err));
+    $('readerDetails').textContent='Tidak ada patch yang dibuat. Periksa file, lalu coba APK/ZIP lain.';
+  }
+}
+function useDetectedPackage(){
+  const p=$('detectedPkg').value.trim();
+  if(!p){$('readerStatus').textContent='TEXTDRAW: GAGAL — belum ada package name yang berhasil dibaca.';return}
+  $('pkg').value=p;
+  document.querySelector('[data-tab="export"]').click();
+  $('downloadResult').classList.remove('hide');
+  $('downloadResult').textContent='Package '+p+' diterapkan ke generator. Pastikan APK sudah didecompile dan titik pemanggilan cocok sebelum rebuild.';
+}
+
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.page').forEach(x=>x.classList.add('hide'));b.classList.add('active');$(b.dataset.tab).classList.remove('hide')}));
+updateColor();gradient();syncToast();syncDialog();$('toastPreview').classList.add('hide');
+setTimeout(()=>{if(!sessionStorage.getItem('putraproWelcome')){sessionStorage.setItem('putraproWelcome','1');$('toastTitle').value='PUTRA PRO';$('toastMsg').value='Selamat datang! Smali Studio siap digunakan.';syncToast();testToast()}},650);
+</script>
+</body></html>
